@@ -1,3 +1,0 @@
-# kratos-realworld/internal/service
-../../internal/service/user.go:10:3: unknown field 'User' in struct literal of type v1.LoginReply
-[31mERROR: exit status 2[m
