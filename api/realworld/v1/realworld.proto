@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package realworld.v1;
+
+import "google/api/annotations.proto";
+
+option go_package = "kratos-realworld/api/realworld/v1;v1";
+
+// The greeting service definition.
+service Realworld {
+  // Sends a greeting
+  rpc Login (LoginRequest) returns (LoginReply) {
+    option (google.api.http) = {
+      post : "/api/users/login",
+      body : "*"
+    };
+  }
+  rpc Regitser (RegisterRequest) returns (RegisterReply) {
+    option (google.api.http) = {
+      post : "/api/users",
+      body : "*"
+    };
+  }
+  // rpc User (RegisterRequest) returns (RegisterReply) {
+  //   option (google.api.http) = {
+  //     post : "/api/users/register",
+  //     body : "*"
+  //   };
+  // }
+}
+
+
+
+message LoginRequest {
+  string name = 1;
+  string email = 2;
+}
+
+// The response message containing the greetings
+message LoginReply {
+  message User {
+    string username = 1;
+    string mobile = 2;
+  }
+  User user = 1;
+}
+
+message RegisterRequest {
+  string name = 1;
+  string email = 2;
+}
+message RegisterReply {
+  string name = 1;
+  string id = 2;
+}
+
+message UserRequest{
+  string id = 1;
+}
+
+message UserReply {
+  string id = 1;
+  string name = 2;
+  string age = 3;
+}
