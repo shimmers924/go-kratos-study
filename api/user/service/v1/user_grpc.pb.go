@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.17.3
-// source: realworld/v1/realworld.proto
+// source: user/service/v1/user.proto
 
 package v1
 
@@ -24,7 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type RealworldClient interface {
 	// Sends a greeting
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
-	Regitser(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error)
+	UserDetail(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailReply, error)
 }
 
 type realworldClient struct {
@@ -37,16 +38,25 @@ func NewRealworldClient(cc grpc.ClientConnInterface) RealworldClient {
 
 func (c *realworldClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error) {
 	out := new(LoginReply)
-	err := c.cc.Invoke(ctx, "/realworld.v1.Realworld/Login", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.service.v1.Realworld/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *realworldClient) Regitser(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error) {
+func (c *realworldClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterReply, error) {
 	out := new(RegisterReply)
-	err := c.cc.Invoke(ctx, "/realworld.v1.Realworld/Regitser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/user.service.v1.Realworld/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *realworldClient) UserDetail(ctx context.Context, in *UserDetailRequest, opts ...grpc.CallOption) (*UserDetailReply, error) {
+	out := new(UserDetailReply)
+	err := c.cc.Invoke(ctx, "/user.service.v1.Realworld/UserDetail", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +69,8 @@ func (c *realworldClient) Regitser(ctx context.Context, in *RegisterRequest, opt
 type RealworldServer interface {
 	// Sends a greeting
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
-	Regitser(context.Context, *RegisterRequest) (*RegisterReply, error)
+	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
+	UserDetail(context.Context, *UserDetailRequest) (*UserDetailReply, error)
 	mustEmbedUnimplementedRealworldServer()
 }
 
@@ -70,8 +81,11 @@ type UnimplementedRealworldServer struct {
 func (UnimplementedRealworldServer) Login(context.Context, *LoginRequest) (*LoginReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
-func (UnimplementedRealworldServer) Regitser(context.Context, *RegisterRequest) (*RegisterReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Regitser not implemented")
+func (UnimplementedRealworldServer) Register(context.Context, *RegisterRequest) (*RegisterReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedRealworldServer) UserDetail(context.Context, *UserDetailRequest) (*UserDetailReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UserDetail not implemented")
 }
 func (UnimplementedRealworldServer) mustEmbedUnimplementedRealworldServer() {}
 
@@ -96,7 +110,7 @@ func _Realworld_Login_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/realworld.v1.Realworld/Login",
+		FullMethod: "/user.service.v1.Realworld/Login",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RealworldServer).Login(ctx, req.(*LoginRequest))
@@ -104,20 +118,38 @@ func _Realworld_Login_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Realworld_Regitser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Realworld_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RegisterRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RealworldServer).Regitser(ctx, in)
+		return srv.(RealworldServer).Register(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/realworld.v1.Realworld/Regitser",
+		FullMethod: "/user.service.v1.Realworld/Register",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RealworldServer).Regitser(ctx, req.(*RegisterRequest))
+		return srv.(RealworldServer).Register(ctx, req.(*RegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Realworld_UserDetail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserDetailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RealworldServer).UserDetail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.service.v1.Realworld/UserDetail",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RealworldServer).UserDetail(ctx, req.(*UserDetailRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -126,7 +158,7 @@ func _Realworld_Regitser_Handler(srv interface{}, ctx context.Context, dec func(
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Realworld_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "realworld.v1.Realworld",
+	ServiceName: "user.service.v1.Realworld",
 	HandlerType: (*RealworldServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -134,10 +166,14 @@ var Realworld_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Realworld_Login_Handler,
 		},
 		{
-			MethodName: "Regitser",
-			Handler:    _Realworld_Regitser_Handler,
+			MethodName: "Register",
+			Handler:    _Realworld_Register_Handler,
+		},
+		{
+			MethodName: "UserDetail",
+			Handler:    _Realworld_UserDetail_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "realworld/v1/realworld.proto",
+	Metadata: "user/service/v1/user.proto",
 }

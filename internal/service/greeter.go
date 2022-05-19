@@ -1,7 +1,7 @@
 package service
 
 import (
-	v1 "kratos-realworld/api/realworld/v1"
+	v1 "kratos-realworld/api/user/service/v1"
 	"kratos-realworld/internal/biz"
 )
 

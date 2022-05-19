@@ -19,13 +19,15 @@ const _ = http.SupportPackageIsVersion1
 
 type RealworldHTTPServer interface {
 	Login(context.Context, *LoginRequest) (*LoginReply, error)
-	Regitser(context.Context, *RegisterRequest) (*RegisterReply, error)
+	Register(context.Context, *RegisterRequest) (*RegisterReply, error)
+	UserDetail(context.Context, *UserDetailRequest) (*UserDetailReply, error)
 }
 
 func RegisterRealworldHTTPServer(s *http.Server, srv RealworldHTTPServer) {
 	r := s.Route("/")
 	r.POST("/api/users/login", _Realworld_Login0_HTTP_Handler(srv))
-	r.POST("/api/users", _Realworld_Regitser0_HTTP_Handler(srv))
+	r.POST("/api/register", _Realworld_Register0_HTTP_Handler(srv))
+	r.GET("/api/user_detail", _Realworld_UserDetail0_HTTP_Handler(srv))
 }
 
 func _Realworld_Login0_HTTP_Handler(srv RealworldHTTPServer) func(ctx http.Context) error {
@@ -34,7 +36,7 @@ func _Realworld_Login0_HTTP_Handler(srv RealworldHTTPServer) func(ctx http.Conte
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/realworld.v1.Realworld/Login")
+		http.SetOperation(ctx, "/user.service.v1.Realworld/Login")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
 			return srv.Login(ctx, req.(*LoginRequest))
 		})
@@ -47,15 +49,15 @@ func _Realworld_Login0_HTTP_Handler(srv RealworldHTTPServer) func(ctx http.Conte
 	}
 }
 
-func _Realworld_Regitser0_HTTP_Handler(srv RealworldHTTPServer) func(ctx http.Context) error {
+func _Realworld_Register0_HTTP_Handler(srv RealworldHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in RegisterRequest
 		if err := ctx.Bind(&in); err != nil {
 			return err
 		}
-		http.SetOperation(ctx, "/realworld.v1.Realworld/Regitser")
+		http.SetOperation(ctx, "/user.service.v1.Realworld/Register")
 		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Regitser(ctx, req.(*RegisterRequest))
+			return srv.Register(ctx, req.(*RegisterRequest))
 		})
 		out, err := h(ctx, &in)
 		if err != nil {
@@ -66,9 +68,29 @@ func _Realworld_Regitser0_HTTP_Handler(srv RealworldHTTPServer) func(ctx http.Co
 	}
 }
 
+func _Realworld_UserDetail0_HTTP_Handler(srv RealworldHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UserDetailRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/user.service.v1.Realworld/UserDetail")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UserDetail(ctx, req.(*UserDetailRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UserDetailReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type RealworldHTTPClient interface {
 	Login(ctx context.Context, req *LoginRequest, opts ...http.CallOption) (rsp *LoginReply, err error)
-	Regitser(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
+	Register(ctx context.Context, req *RegisterRequest, opts ...http.CallOption) (rsp *RegisterReply, err error)
+	UserDetail(ctx context.Context, req *UserDetailRequest, opts ...http.CallOption) (rsp *UserDetailReply, err error)
 }
 
 type RealworldHTTPClientImpl struct {
@@ -83,7 +105,7 @@ func (c *RealworldHTTPClientImpl) Login(ctx context.Context, in *LoginRequest, o
 	var out LoginReply
 	pattern := "/api/users/login"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation("/realworld.v1.Realworld/Login"))
+	opts = append(opts, http.Operation("/user.service.v1.Realworld/Login"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
@@ -92,13 +114,26 @@ func (c *RealworldHTTPClientImpl) Login(ctx context.Context, in *LoginRequest, o
 	return &out, err
 }
 
-func (c *RealworldHTTPClientImpl) Regitser(ctx context.Context, in *RegisterRequest, opts ...http.CallOption) (*RegisterReply, error) {
+func (c *RealworldHTTPClientImpl) Register(ctx context.Context, in *RegisterRequest, opts ...http.CallOption) (*RegisterReply, error) {
 	var out RegisterReply
-	pattern := "/api/users"
+	pattern := "/api/register"
 	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation("/realworld.v1.Realworld/Regitser"))
+	opts = append(opts, http.Operation("/user.service.v1.Realworld/Register"))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
+func (c *RealworldHTTPClientImpl) UserDetail(ctx context.Context, in *UserDetailRequest, opts ...http.CallOption) (*UserDetailReply, error) {
+	var out UserDetailReply
+	pattern := "/api/user_detail"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation("/user.service.v1.Realworld/UserDetail"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
