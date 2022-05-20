@@ -16,10 +16,6 @@ import (
 	"kratos-realworld/internal/service"
 )
 
-// func initApp(*conf.Server, *conf.Registry, *conf.Data, log.Logger, *tracesdk.TracerProvider) (*kratos.App, func(), error) {
-// 	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))
-// }
-
 // wireApp init kratos application.
 func wireApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) {
 	panic(wire.Build(server.ProviderSet, data.ProviderSet, biz.ProviderSet, service.ProviderSet, newApp))

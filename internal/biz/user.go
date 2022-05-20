@@ -13,18 +13,30 @@ import (
 
 // 定义模型
 type User struct {
-	username string
+	Email        string
+	Token        string
+	Username     string
+	Bio          string
+	Image        string
+	PasswordHash string
 }
 
-// 定义data层userrepo内需要实现的业务逻辑接口
-type UserRepo interface {
-	//Save(context.Context, *Greeter) (*Greeter, error)
-	// Update(context.Context, *Greeter) (*Greeter, error)
-	// FindByID(context.Context, int64) (*Greeter, error)
-	// ListByHello(context.Context, string) ([]*Greeter, error)
-	// ListAll(context.Context) ([]*Greeter, error)
+//用户登录模型
+type UserLogin struct {
+	Email    string
+	Token    string
+	Username string
+	Bio      string
+	Image    string
+}
 
-	CreateUser(ctx context.Context, user *User) error
+//定义接口
+type UserRepo interface {
+	CreateUser(ctx context.Context, user *User) error //接口内方法
+	UpdateUser(context.Context, int64) error
+	GetUserByEmail(ctx context.Context, email string) (*User, error)
+	ListByIds(context.Context, []int) ([]*User, error)
+	ListAll(context.Context) ([]*User, error)
 }
 
 type UserUsecase struct {
@@ -32,13 +44,33 @@ type UserUsecase struct {
 	log *log.Helper
 }
 
-// 为结构体userusecase赋值
+// 把data 层实现注入到biz层
 func NewUserUsecase(ur UserRepo, logger log.Logger) *UserUsecase {
 	return &UserUsecase{ur: ur, log: log.NewHelper(logger)}
 }
 
-// CreateUser creates a User, and returns the new User.
-func (uc *UserUsecase) CreateCreateUser(ctx context.Context, u *User) error {
+// 为UserUsecase结构体添加一个指针接收器的方法
+func (uc *UserUsecase) Login(ctx context.Context, u *User) error {
+	if err := uc.ur.CreateUser(ctx, u); err != nil {
+	}
+	return nil
+}
+func (uc *UserUsecase) update(ctx context.Context, u *User) error {
+	if err := uc.ur.UpdateUser(ctx, u); err != nil {
+	}
+	return nil
+}
+func (uc *UserUsecase) GetUserByEmail(ctx context.Context, u *User) error {
+	if err := uc.ur.GetUserByEmail(ctx, u.Email); err != nil {
+	}
+	return nil
+}
+func (uc *UserUsecase) ListByIds(ctx context.Context, u *User) error {
+	if err := uc.ur.CreateUser(ctx, u); err != nil {
+	}
+	return nil
+}
+func (uc *UserUsecase) ListAll(ctx context.Context, u *User) error {
 	if err := uc.ur.CreateUser(ctx, u); err != nil {
 	}
 	return nil
