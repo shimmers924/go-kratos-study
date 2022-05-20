@@ -31,11 +31,17 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
-    /api/user_detail:
+    /api/user_detail/{id}:
         get:
             tags:
                 - Realworld
             operationId: Realworld_UserDetail
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: string
             responses:
                 "200":
                     description: OK

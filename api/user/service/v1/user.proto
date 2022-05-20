@@ -23,7 +23,7 @@ service Realworld {
   }
   rpc UserDetail (UserDetailRequest) returns (UserDetailReply) {
     option (google.api.http) = {
-      get : "/api/user_detail",
+      get : "/api/user_detail/{id}",
     };
   }
 }
@@ -53,7 +53,9 @@ message RegisterReply {
   string id = 1;
 }
 
-message UserDetailRequest {}
+message UserDetailRequest {
+  string id =1;
+}
 
 message UserDetailReply {
   string id = 1;

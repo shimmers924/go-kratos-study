@@ -2,9 +2,8 @@ package main
 
 import (
 	"flag"
-	"os"
-
 	"kratos-realworld/internal/conf"
+	"os"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"

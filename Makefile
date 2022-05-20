@@ -39,15 +39,23 @@ build:
 .PHONY: generate
 # generate
 generate:
-	go mod tidy
-	go get github.com/google/wire/cmd/wire@latest
 	go generate ./...
+
+.PHONY: wire
+# wire
+wire:
+	cd cmd/kratos-realworld/ && wire
+
+.PHONY: run
+run:
+	kratos run
 
 .PHONY: all
 # generate all
 all:
 	make api;
 	make config;
+	make errors;
 	make generate;
 
 # show help
